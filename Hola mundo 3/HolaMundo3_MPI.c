@@ -11,7 +11,7 @@ int main(int argc,char * argv[]){
 	if(rango!=0){
 		printf("Proceso Esclavo %d de %d\n",rango,procesos);
 		MPI_Recv(mensaje,100,MPI_CHAR,fuente,etiqueta,MPI_COMM_WORLD,&estado);
-		printf("%s\n",mensaje);
+		printf("%s recibido de %d\n",mensaje,fuente);
 	}else{
 		strcpy(mensaje,"Hello world\0");
 		printf("Proceso Maestro 0,Procesos = %d\n",procesos);

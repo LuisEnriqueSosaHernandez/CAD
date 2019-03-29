@@ -9,7 +9,7 @@ int main(int argc,char * argv[]){
 	MPI_Comm_rank(MPI_COMM_WORLD,&rango);
 	MPI_Comm_size(MPI_COMM_WORLD,&procesos);
 	if(rango!=0){
-		strcpy(mensaje,"Hello world\0");
+		sprintf(mensaje,"Hola fui enviado del proceso %d",rango);
 		printf("Proceso Esclavo %d de %d\n",rango,procesos);
 		destino=0;
 		MPI_Send(mensaje,strlen(mensaje)+1,MPI_CHAR,destino,etiqueta,MPI_COMM_WORLD);
