@@ -44,9 +44,13 @@ int main(int argc,char * argv[]) {
             printf("\nMatriz resultante\n");
             for(i=0; i<tam; i++) {
                 destino=i+1;
-                fuente=i+1;
+                //fuente=i+1;
                 MPI_Send(&matriz1[i],5,MPI_INT,destino,etiqueta,MPI_COMM_WORLD);
                 MPI_Send(&matriz2[i],5,MPI_INT,destino,etiqueta,MPI_COMM_WORLD);
+                //MPI_Recv(&matrizResultante[i],5,MPI_INT,fuente,etiqueta,MPI_COMM_WORLD,&estado);
+            }
+            for(i=0; i<tam; i++) {
+                fuente=i+1;
                 MPI_Recv(&matrizResultante[i],5,MPI_INT,fuente,etiqueta,MPI_COMM_WORLD,&estado);
             }
             for(i=0; i<tam; i++) {
