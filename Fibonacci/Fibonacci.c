@@ -68,11 +68,9 @@ int main(int argc,char * argv[]) {
             MPI_Recv(vector1,2,MPI_INT,fuente,etiqueta,MPI_COMM_WORLD,&estado);//Recepcion del vector en la posición 0 de la matriz 1
             //Suma de las posiciones del vector recibido
             for(i=0; i<tam; i++) {
-				if(vector1[i]<1){
+				
 					vector2[i]=fibonacci(vector1[i]);//Suma y  asignación de la suma en un vector resultante
-				}else{
-					vector2[i]=fibonacci(vector1[i]-1);//Suma y  asignación de la suma en un vector resultante
-				}
+				
             }
             MPI_Send(vector2,2,MPI_INT,destino,etiqueta,MPI_COMM_WORLD);//Envío del vector resultante al proceso 0
             break;
