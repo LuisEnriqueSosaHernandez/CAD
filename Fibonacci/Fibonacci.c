@@ -33,7 +33,7 @@ int main(int argc,char * argv[]) {
         case 0:
         //Llenado e impresión de la matriz 1
             printf("Matriz 1\n");
-            llenado=17;
+            llenado=10;
             for(i=0; i<tam; i++) {
                 for(j=0; j<tam; j++) {
                     matriz1[i][j]=llenado;
@@ -86,14 +86,11 @@ int fibonacci(int n){
 	 if (n>1){
        return fibonacci(n-1) + fibonacci(n-2);  //función recursiva
     }
-    else if (n==1) {  // caso base
+    else if (n==1||n==2) {  // caso base
         return 1;
     }
     else if (n==0){  // caso base
         return 0;
-    }
-    else if (n==2){  // caso base
-        return 1;
     }
     else{ //numero negativo
         return n; 
