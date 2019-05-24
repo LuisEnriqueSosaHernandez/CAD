@@ -3,20 +3,21 @@
 #include <mpi.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
-#define tam 16
+#define tam 10
 
 int fibonacci(int n);
 
 int main(int argc,char * argv[]){
 	clock_t t_inicial,t_final;
 	int rango,procesos,etiqueta=0;
-	int i,j,llenado,contProcesos,divisionTrabajo;
+	int i,j,llenado,contProcesos;
 	long long int matriz[tam][tam];
 	long long int matrizResultante[tam][tam];
 	long long int matrizTemporal[tam][tam];
 	long long int vector[tam];
-	
+	float divisionTrabajo;
 	double seg;
 	
     MPI_Status estado;	
@@ -24,11 +25,19 @@ int main(int argc,char * argv[]){
 	MPI_Comm_rank(MPI_COMM_WORLD,&rango);
 	MPI_Comm_size(MPI_COMM_WORLD,&procesos);
 	
-	 if(procesos!=3) {
+	 if(procesos!=9) {
         printf("El numero de procesadores no es el requerido\n");
         exit(1);
     } else {
-		divisionTrabajo=tam/(procesos-1);
+		divisionTrabajo=(float)tam/(float)(procesos-1);
+		divisionTrabajo=round(divisionTrabajo);
+		int acumulador=0;
+		int vectorTrabajo[procesos-1];
+		for(i=0;i<(procesos-2);i++){
+		acumulador+=divisionTrabajo;
+		vectorTrabajo[i]=divisionTrabajo;
+	}
+	vectorTrabajo[procesos-2]=tam-acumulador;
 	switch(rango){
 		case 0:
 		 printf("Matriz a calcular\n");         
@@ -44,7 +53,7 @@ int main(int argc,char * argv[]){
             i=0;
             contProcesos=1;
 		while(i<tam){
-			for(j=0;j<divisionTrabajo;j++){
+			for(j=0;j<vectorTrabajo[contProcesos-1];j++){
 		MPI_Send(&matriz[i],tam,MPI_LONG_LONG_INT,contProcesos,etiqueta,MPI_COMM_WORLD);
 		i++;
 		//printf("Enviado desde %d\n",rango);
@@ -81,14 +90,14 @@ int main(int argc,char * argv[]){
 	break;
 		default:
 		t_inicial=clock();
-		for(i=0;i<divisionTrabajo;i++){
+		for(i=0;i<vectorTrabajo[rango-1];i++){
 		MPI_Recv(vector,tam,MPI_LONG_LONG_INT,0,etiqueta,MPI_COMM_WORLD,&estado);
 		//printf("Recibido en procesador %d desde %d\n",rango,estado.MPI_SOURCE);
 		for(j=0;j<tam;j++){
 			matrizTemporal[i][j]=fibonacci(vector[j]);			
 		}
 	}
-		for(i=0;i<divisionTrabajo;i++){
+		for(i=0;i<vectorTrabajo[rango-1];i++){
 		MPI_Send(&matrizTemporal[i],tam,MPI_LONG_LONG_INT,0,etiqueta,MPI_COMM_WORLD);
 		//printf("Enviado desde procesador %d\n",rango);
 	}
