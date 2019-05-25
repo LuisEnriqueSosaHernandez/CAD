@@ -5,7 +5,7 @@
 #include <time.h>
 #include <math.h>
 
-#define tam 10
+#define tam 16
 
 int fibonacci(int n);
 
@@ -13,19 +13,23 @@ int main(int argc,char * argv[]){
 	clock_t t_inicial,t_final;
 	int rango,procesos,etiqueta=0;
 	int i,j,llenado,contProcesos;
+	long long int num;
 	long long int matriz[tam][tam];
 	long long int matrizResultante[tam][tam];
 	long long int matrizTemporal[tam][tam];
 	long long int vector[tam];
 	float divisionTrabajo;
 	double seg;
-	
+	FILE *fichero;
+	char nombre_ficheroR[] = "fibonacciW.bin";
+	char nombre_ficheroW[] = "fibonacciR.bin";
+	size_t resultado;
     MPI_Status estado;	
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rango);
 	MPI_Comm_size(MPI_COMM_WORLD,&procesos);
 	
-	 if(procesos!=9) {
+	 if(procesos!=7) {
         printf("El numero de procesadores no es el requerido\n");
         exit(1);
     } else {
@@ -40,16 +44,53 @@ int main(int argc,char * argv[]){
 	vectorTrabajo[procesos-2]=tam-acumulador;
 	switch(rango){
 		case 0:
-		 printf("Matriz a calcular\n");         
-            for(i=0; i<tam; i++) {
-                for(j=0; j<tam; j++) {
-					//llenado=rand()%35;
-					llenado=15;
-                    matriz[i][j]=llenado;
-                    printf("%lld ",matriz[i][j]);
-                }
-                printf("\n");
-            }
+		 printf("Procesando archivo...\n");   
+		
+		//LLenado de la matriz  Read    
+            fichero = fopen(nombre_ficheroR, "rb");
+  if (fichero == NULL)
+  {
+	  printf("El fichero no se ha podido abrir para lectura.\n");
+	  return -1;
+  }
+  i=0;
+  j=0;
+  while (!feof(fichero))
+  {
+    resultado = fread(&num, sizeof(long long int), 1, fichero);
+	if (resultado != 1)
+	{
+		break;
+	}
+	matriz[i][j]=num;
+	j++;
+	if(j>=tam){
+		j=0;
+		i++;
+	}
+  }
+
+  if (ferror(fichero)!=0)
+  {
+	  printf("Ha ocurrido algún error en la lectura de números.\n");
+  }
+  /*else
+  {
+	 for(i=0;i<tam;i++){
+		 for(j=0;j<tam;j++){
+			 printf("%lld ",matriz[i][j]);
+		 }
+		 printf("\n");
+	 }
+  }*/
+
+  if (fclose(fichero)!=0)
+  {
+    printf("No se ha podido cerrar el fichero.\n");
+	return -1;
+  }
+  
+  
             i=0;
             contProcesos=1;
 		while(i<tam){
@@ -80,13 +121,35 @@ int main(int argc,char * argv[]){
 	contProcesos++;
 	}*/
 	
-	 printf("\nMatriz fibonacci\n");
-            for(i=0; i<tam; i++) {
-                for(j=0; j<tam; j++) {
-                    printf("%lld ",matrizResultante[i][j]);
-                }
-					printf("\n");
-            }
+	
+	 //Escritura de la matriz Write
+	 fichero = fopen(nombre_ficheroW, "wb");
+  if (fichero == NULL)
+  {
+	  printf("El fichero no se ha podido abrir para escritura.\n");
+	  return -1;
+  }
+  for(i=0;i<tam;i++){
+  resultado = fwrite(matrizResultante[0], sizeof(long long int), tam, fichero);
+  if (resultado!=tam)
+  {
+	  printf("No se han escrito todos los %d números del array.\n", tam);
+  }
+}
+
+  if (fclose(fichero)!=0)
+  {
+    printf("No se ha podido cerrar el fichero.\n");
+	return -1;
+  }else{
+	  printf("La matriz resultante ha sido escrita en el archivo\n");
+  }
+	 /*for(i=0;i<tam;i++){
+		 for(j=0;j<tam;j++){
+			 printf("%lld ",matrizResultante[i][j]);
+		 }
+		 printf("\n");
+	 }*/
 	break;
 		default:
 		t_inicial=clock();
