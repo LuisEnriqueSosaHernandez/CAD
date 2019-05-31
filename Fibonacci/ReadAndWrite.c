@@ -47,7 +47,7 @@ do{
 	  return -1;
   }
   for(i=0;i<TAM;i++){
-  resultado = fwrite(matrizW[0], sizeof(long long int), TAM, fichero);
+  resultado = fwrite(matrizW[i], sizeof(long long int), TAM, fichero);
   if (resultado!=TAM)
   {
 	  printf("No se han escrito todos los %d números del array.\n", TAM);

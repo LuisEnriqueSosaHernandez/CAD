@@ -130,7 +130,7 @@ int main(int argc,char * argv[]){
 	  return -1;
   }
   for(i=0;i<tam;i++){
-  resultado = fwrite(matrizResultante[0], sizeof(long long int), tam, fichero);
+  resultado = fwrite(matrizResultante[i], sizeof(long long int), tam, fichero);
   if (resultado!=tam)
   {
 	  printf("No se han escrito todos los %d números del array.\n", tam);
