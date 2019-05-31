@@ -172,7 +172,7 @@ do{
   printf("Opcion incorrecta\n");
   break;
 }
-}while(opcion!=3);
+}while(opcion!=4);
   return 0;
 }
 

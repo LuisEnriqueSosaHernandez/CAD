@@ -209,5 +209,5 @@ int main(int argc,char * argv[]){
 	return 0;
 }
 int Sumando(int n,int n2){
-	return n+n;
+	return n+n2;
 }	
