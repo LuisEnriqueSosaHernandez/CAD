@@ -32,7 +32,7 @@ int main(int argc,char * argv[]){
 	MPI_Comm_rank(MPI_COMM_WORLD,&rango);//Asignación del procesador en turno a la variable rango
 	MPI_Comm_size(MPI_COMM_WORLD,&procesos);//Asignación del número de procesadores a la variable procesos
 	
-	 if(procesos!=7) {//Validación del numero de procesadores requeridos
+	 if(procesos!=3) {//Validación del numero de procesadores requeridos
         printf("El numero de procesadores no es el requerido\n");
         exit(1);
     } else {
