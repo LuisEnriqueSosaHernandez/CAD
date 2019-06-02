@@ -1,3 +1,4 @@
+//Importación de librerias
 #include <string.h>
 #include <stdio.h>
 #include <mpi.h>
@@ -5,11 +6,12 @@
 #include <time.h>
 #include <math.h>
 
-#define tam 16
+#define tam 16 //Variable estática que define las dimensiones de las matrices
 
-int fibonacci(int n);
+int fibonacci(int n);//Función para calcular fibonnaci de un número dado por parametro
 
 int main(int argc,char * argv[]){
+	//Declaración de variables
 	clock_t t_inicial,t_final;
 	int rango,procesos,etiqueta=0;
 	int i,j,llenado,contProcesos;
@@ -24,12 +26,13 @@ int main(int argc,char * argv[]){
 	char nombre_ficheroR[] = "fibonacciW.bin";
 	char nombre_ficheroW[] = "fibonacciR.bin";
 	size_t resultado;
-    MPI_Status estado;	
-	MPI_Init(&argc,&argv);
-	MPI_Comm_rank(MPI_COMM_WORLD,&rango);
-	MPI_Comm_size(MPI_COMM_WORLD,&procesos);
+    MPI_Status estado;
+    //LLamado a funciones propias de MPI para el control del ambiente paralelo	
+	MPI_Init(&argc,&argv);//Inicialización del ambiente paralelo
+	MPI_Comm_rank(MPI_COMM_WORLD,&rango);//Asignación del procesador en turno a la variable rango
+	MPI_Comm_size(MPI_COMM_WORLD,&procesos);//Asignación del número de procesadores a la variable procesos
 	
-	 if(procesos!=7) {
+	 if(procesos!=7) {//Validación del numero de procesadores requeridos
         printf("El numero de procesadores no es el requerido\n");
         exit(1);
     } else {
@@ -42,11 +45,11 @@ int main(int argc,char * argv[]){
 		vectorTrabajo[i]=divisionTrabajo;
 	}
 	vectorTrabajo[procesos-2]=tam-acumulador;
-	switch(rango){
-		case 0:
+	switch(rango){//Uso de la variable rango para asignar tareas a cada procesador mediante un switch
+		case 0://Proceso maestro que funge como repartidor de trabajo asignando tareas a los procesos esclavos
 		 printf("Procesando archivo...\n");   
 		
-		//LLenado de la matriz  Read    
+		//Lectura de archivo para escritura en memoria   
             fichero = fopen(nombre_ficheroR, "rb");
   if (fichero == NULL)
   {
@@ -95,6 +98,7 @@ int main(int argc,char * argv[]){
             contProcesos=1;
 		while(i<tam){
 			for(j=0;j<vectorTrabajo[contProcesos-1];j++){
+				//Envío del mensaje con los datos a procesar
 		MPI_Send(&matriz[i],tam,MPI_LONG_LONG_INT,contProcesos,etiqueta,MPI_COMM_WORLD);
 		i++;
 		//printf("Enviado desde %d\n",rango);
@@ -105,6 +109,7 @@ int main(int argc,char * argv[]){
 	//Recibir desornado
 	
 	for(i=0;i<tam;i++){		
+		//Recepción del mensaje enviado por un nodo esclavo al nodo maestro por orden de finalización de ejecución
 		MPI_Recv(&matrizResultante[i],100,MPI_LONG_LONG_INT,MPI_ANY_SOURCE,etiqueta,MPI_COMM_WORLD,&estado);
 		//printf("Recibido en %d desde %d\n",rango,estado.MPI_SOURCE);
 	}
@@ -122,7 +127,7 @@ int main(int argc,char * argv[]){
 	}*/
 	
 	
-	 //Escritura de la matriz Write
+	 //Escritura de la matriz en archivo
 	 fichero = fopen(nombre_ficheroW, "wb");
   if (fichero == NULL)
   {
@@ -151,9 +156,11 @@ int main(int argc,char * argv[]){
 		 printf("\n");
 	 }*/
 	break;
-		default:
+		default:/*Número de procesador esclavo a ejecutar, mediante la función default, para volver dinamico el programa en
+		cuanto al uso de un distinto número de procesadores para ejecución*/
 		t_inicial=clock();
 		for(i=0;i<vectorTrabajo[rango-1];i++){
+			//Recepción del mensaje del nodo maestro con los datos a procesar
 		MPI_Recv(vector,tam,MPI_LONG_LONG_INT,0,etiqueta,MPI_COMM_WORLD,&estado);
 		//printf("Recibido en procesador %d desde %d\n",rango,estado.MPI_SOURCE);
 		for(j=0;j<tam;j++){
@@ -161,6 +168,7 @@ int main(int argc,char * argv[]){
 		}
 	}
 		for(i=0;i<vectorTrabajo[rango-1];i++){
+			//Envio del mensaje al nodo maestro con los datos procesados
 		MPI_Send(&matrizTemporal[i],tam,MPI_LONG_LONG_INT,0,etiqueta,MPI_COMM_WORLD);
 		//printf("Enviado desde procesador %d\n",rango);
 	}
@@ -170,9 +178,10 @@ int main(int argc,char * argv[]){
 	break;
 		}
 	}
-	MPI_Finalize();
+	MPI_Finalize();//Finalización del ambiente paralelo
 	return 0;
 }
+//Función fibonnaci
 int fibonacci(int n){
 	 if (n>1){
        return fibonacci(n-1) + fibonacci(n-2); 
