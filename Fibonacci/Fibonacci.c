@@ -6,13 +6,14 @@
 #include <time.h>
 #include <math.h>
 
-#define tam 16 //Variable estática que define las dimensiones de las matrices
+#define tam 20 //Variable estática que define las dimensiones de las matrices
 
 int fibonacci(int n);//Función para calcular fibonnaci de un número dado por parametro
 
 int main(int argc,char * argv[]){
 	//Declaración de variables
 	clock_t t_inicial,t_final;
+	t_inicial=clock();
 	int rango,procesos,etiqueta=0;
 	int i,j,llenado,contProcesos;
 	long long int num;
@@ -32,7 +33,7 @@ int main(int argc,char * argv[]){
 	MPI_Comm_rank(MPI_COMM_WORLD,&rango);//Asignación del procesador en turno a la variable rango
 	MPI_Comm_size(MPI_COMM_WORLD,&procesos);//Asignación del número de procesadores a la variable procesos
 	
-	 if(procesos!=3) {//Validación del numero de procesadores requeridos
+	 if(procesos!=11) {//Validación del numero de procesadores requeridos
         printf("El numero de procesadores no es el requerido\n");
         exit(1);
     } else {
@@ -158,7 +159,7 @@ int main(int argc,char * argv[]){
 	break;
 		default:/*Número de procesador esclavo a ejecutar, mediante la función default, para volver dinamico el programa en
 		cuanto al uso de un distinto número de procesadores para ejecución*/
-		t_inicial=clock();
+		//t_inicial=clock();
 		for(i=0;i<vectorTrabajo[rango-1];i++){
 			//Recepción del mensaje del nodo maestro con los datos a procesar
 		MPI_Recv(vector,tam,MPI_LONG_LONG_INT,0,etiqueta,MPI_COMM_WORLD,&estado);
@@ -172,13 +173,16 @@ int main(int argc,char * argv[]){
 		MPI_Send(&matrizTemporal[i],tam,MPI_LONG_LONG_INT,0,etiqueta,MPI_COMM_WORLD);
 		//printf("Enviado desde procesador %d\n",rango);
 	}
-	t_final=clock();
+	/*t_final=clock();
 	seg=(double)(t_final-t_inicial)/CLOCKS_PER_SEC;
-	printf("%.16g milisegundos procesador %d\n",seg*1000.00,rango);
+	printf("%.16g milisegundos procesador %d\n",seg*1000.00,rango);*/
 	break;
 		}
 	}
 	MPI_Finalize();//Finalización del ambiente paralelo
+	t_final=clock();
+	seg=(double)(t_final-t_inicial)/CLOCKS_PER_SEC;
+	printf("%.16g milisegundos procesador %d\n",seg*1000.00,rango);
 	return 0;
 }
 //Función fibonnaci
