@@ -120,7 +120,7 @@ int main(int argc,char * argv[]){
 	 /*i=0;
             contProcesos=1;
 		while(i<tam){
-			for(j=0;j<divisionTrabajo;j++){
+			for(j=0;j<vectorTrabajo[contProcesos-1];j++){
 		MPI_Recv(&matrizResultante[i],100,MPI_LONG_LONG_INT,contProcesos,etiqueta,MPI_COMM_WORLD,&estado);
 		i++;	
 	}
