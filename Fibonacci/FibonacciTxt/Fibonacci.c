@@ -33,7 +33,7 @@ int main(int argc,char * argv[]){
 	MPI_Comm_rank(MPI_COMM_WORLD,&rango);//Asignación del procesador en turno a la variable rango
 	MPI_Comm_size(MPI_COMM_WORLD,&procesos);//Asignación del número de procesadores a la variable procesos
 	
-	 if(procesos!=11) {//Validación del numero de procesadores requeridos
+	 if(procesos!=5) {//Validación del numero de procesadores requeridos
         printf("El numero de procesadores no es el requerido\n");
         exit(1);
     } else {
@@ -110,7 +110,7 @@ int main(int argc,char * argv[]){
 	for(i=0;i<tam;i++){		
 		//Recepción del mensaje enviado por un nodo esclavo al nodo maestro por orden de finalización de ejecución
 		MPI_Recv(&matrizResultante[i],100,MPI_LONG_LONG_INT,MPI_ANY_SOURCE,etiqueta,MPI_COMM_WORLD,&estado);
-		//printf("Recibido en %d desde %d\n",rango,estado.MPI_SOURCE);
+		printf("Recibido en %d desde %d\n",rango,estado.MPI_SOURCE);
 	}
 	
 	//Recibibir en orden
@@ -169,7 +169,7 @@ int main(int argc,char * argv[]){
 		for(i=0;i<vectorTrabajo[rango-1];i++){
 			//Recepción del mensaje del nodo maestro con los datos a procesar
 		MPI_Recv(vector,tam,MPI_LONG_LONG_INT,0,etiqueta,MPI_COMM_WORLD,&estado);
-		//printf("Recibido en procesador %d desde %d\n",rango,estado.MPI_SOURCE);
+		printf("Recibido en procesador %d desde %d\n",rango,estado.MPI_SOURCE);
 		for(j=0;j<tam;j++){
 			matrizTemporal[i][j]=fibonacci(vector[j]);			
 		}
